@@ -1,17 +1,18 @@
 from flask import Flask, jsonify, request
 import requests
+import config
+
+app = Flask(__name__)
 
 @app.route('/')
 def home():
     return "welcome to flask"
 
-app = Flask(__name__)
-
 @app.route('/get-subjects', methods=['GET'])
 def get_subjects():
     
-    api_url = 'http://example.com/soa-gateway/course/webservice/v2/subjects'
-    
+    api_url = f"https://gw.its.yale.edu/soa-gateway/course/webservice/v2/subjects?apikey={config.API_KEY}"
+
     try:
         # Make the request to the API
         response = requests.get(api_url)
