@@ -17,10 +17,10 @@ def get_subjects_api_call():
     response = requests.get(api_url)
     
     # check if the request failed
-    if response.status_code != 200:
-        return jsonify({'error': 'Failed to fetch subjects', 'status_code': response.status_code})
+    if response.status_code == 200:
+        return response.json()
     else:
-        return jsonify(response)
+        return jsonify({'error': 'Failed to fetch subjects', 'status_code': response.status_code})
     
 def get_subjects_info_api_call(department_code):
     endpoint = "https://gw.its.yale.edu/soa-gateway/courses/webservice/v3/index"
@@ -29,7 +29,7 @@ def get_subjects_info_api_call(department_code):
     
     # check if the request was successful
     if response.status_code == 200:
-        return jsonify(response)
+        return response.json()
     else:
         return jsonify({'error': 'Failed to fetch subjects', 'status_code': response.status_code})
     

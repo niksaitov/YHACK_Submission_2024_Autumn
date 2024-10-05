@@ -3,8 +3,6 @@ from sentence_transformers import SentenceTransformer
 from sqlalchemy import create_engine, text
 from flask import Flask, request, jsonify
 
-
-
 app = Flask(__name__)
 
 username = 'demo'
@@ -15,10 +13,10 @@ namespace = 'USER'
 CONNECTION_STRING = f"iris://{username}:{password}@{hostname}:{port}/{namespace}"
 engine = create_engine(CONNECTION_STRING)
 
-# Load your model (for generating description vectors)
+# load your model (for generating description vectors)
 model = SentenceTransformer('all-MiniLM-L6-v2') 
 
-# Create a department lookup table
+# create a department lookup table
 department_lookup = {
     'computer science': 'CPSC',
     'political science': 'PSCI',
@@ -26,20 +24,21 @@ department_lookup = {
     'biology': 'BIOL',
     'economics': 'ECON',
 }
-# Function to search courses based on user input
+# function to search courses based on user input
 @app.route('/search', methods=['POST'])
 def search_courses():
     data = request.json
-    description_search = data['query']  # Get the search query from the request
-    department = data['department'].lower()  # Convert department to lowercase for lookup
+    description_search = data['query']  # get the search query from the request
+    department = data['department'].lower()  # convert department to lowercase for lookup
     
-    # Use the lookup table to get the abbreviation
-    # department_code = department_lookup.get(department, department)  # Default to the original name if no match is found
+    # use the lookup table to get the abbreviation
+    # department_code = department_lookup.get(department, department)  
+    # default to the original name if no match is found
 
-    # Convert the search query into a vector
+    # convert the search query into a vector
     search_vector = model.encode(description_search, normalize_embeddings=True).tolist()
 
-    # Query the database for similar courses, filtering by department and limiting to top 5
+    # query the database for similar courses, filtering by department and limiting to top 5
     with engine.connect() as conn:
         sql = text("""
             SELECT TOP 5 * FROM courses 
@@ -48,7 +47,7 @@ def search_courses():
         """)
         results = conn.execute(sql, {'department': department, 'search_vector': search_vector}).fetchall()
 
-        # Format the results and return them to the client
+        # format the results and return them to the client
     courses = [
         {
             'courseNumber': row['courseNumber'], 
@@ -59,7 +58,7 @@ def search_courses():
             'distDesg': row['distDesg'], 
             'meetingPattern': row['meetingPattern'], 
             'prerequisites': row['prerequisites'], 
-            'description_vector': row['description_vector']  # Return the vector if necessary, or remove it
+            'description_vector': row['description_vector']  # return the vector if necessary, or remove it
         }
         for row in results
     ]
