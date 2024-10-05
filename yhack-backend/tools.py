@@ -12,7 +12,7 @@ def is_faulty_response(response:dict):
     return (response[0].keys()[0] == "error")
 
 def get_subjects_api_call():
-    endpoint = "https://gw.its.yale.edu/soa-gateway/course/webservice/v2/subjects"
+    endpoint = "https://gw.its.yale.edu/soa-gateway/courses/webservice/v3/index"
     api_url = f"{endpoint}?apikey={config.API_KEY}"
     response = requests.get(api_url)
     
