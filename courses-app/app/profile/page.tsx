@@ -1,7 +1,8 @@
 // home/page.tsx
 'use client';
 import React, { useState, useEffect } from 'react';
-import { Box, Button, Heading, Input, Stack, Text, Select } from '@chakra-ui/react';
+import { Box, Button, Heading, Input, Stack, Text } from '@chakra-ui/react';
+import Select from 'react-select';
 import Typed from 'typed.js';
 
 // Define custom colors
@@ -13,15 +14,22 @@ const customColors = {
 };
 
 // Define major options
-const majorOptions = ['Computer Science', 'Political Science', 'Philosophy', 'Math', 'Linguistics'];
+const majorsWithCodes = [
+    { code: 'CS', name: 'Computer Science' },
+    { code: 'PS', name: 'Political Science' },
+    { code: 'PH', name: 'Philosophy' },
+    { code: 'MA', name: 'Math' },
+    { code: 'LI', name: 'Linguistics' },
+    // Add more majors here...
+];
 
 export default function Home() {
     const [inputValue, setInputValue] = useState('');
-    const [textBubbles, setTextBubbles] = useState<string[]>([]);
-    const [selectedMajor, setSelectedMajor] = useState('');
+    const [filteredMajors, setFilteredMajors] = useState(majorsWithCodes);
+    const [selectedMajorCode, setSelectedMajorCode] = useState('');
     const [currentPromptIndex, setCurrentPromptIndex] = useState(0);
-    const [showNextButton, setShowNextButton] = useState(false); // State for showing the next button
-
+    const [showNextButton, setShowNextButton] = useState(false);
+    const [textBubbles, setTextBubbles] = useState<string[]>([]);
     const prompts = [
         "Hello! Before we provide you with our recommendations, we need to get to know you a little.",
         "What are you (thinking of) majoring in?",
@@ -31,11 +39,11 @@ export default function Home() {
 
     useEffect(() => {
         // Load saved data from localStorage
-        const savedMajor = localStorage.getItem('selectedMajor');
+        const savedMajorCode = localStorage.getItem('selectedMajorCode');
         const savedBubbles = localStorage.getItem('textBubbles');
 
-        if (savedMajor) {
-            setSelectedMajor(savedMajor);
+        if (savedMajorCode) {
+            setSelectedMajorCode(savedMajorCode);
         }
 
         if (savedBubbles) {
@@ -63,7 +71,14 @@ export default function Home() {
     }, [currentPromptIndex]);
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setInputValue(event.target.value);
+            const value = event.target.value;
+            setInputValue(value);
+
+            // Filter majors based on input
+            const filtered = majorsWithCodes.filter(major =>
+                major.name.toLowerCase().includes(value.toLowerCase())
+            );
+            setFilteredMajors(filtered);
     };
 
     const handleAddBubble = () => {
@@ -85,12 +100,18 @@ export default function Home() {
         localStorage.setItem('textBubbles', JSON.stringify(updatedBubbles));
     };
 
-    const handleMajorChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const major = event.target.value;
-        setSelectedMajor(major);
+    const handleMajorSelect = (selectedOption: { value: string, label: string } | null) => {
+        if (selectedOption) {
+            setSelectedMajorCode(selectedOption.value);
+            setInputValue(''); // Clear input after selection
+            setFilteredMajors(majorsWithCodes); // Reset the list
 
-        // Save major to localStorage
-        localStorage.setItem('selectedMajor', major);
+            // Save the selected major code to localStorage
+            localStorage.setItem('selectedMajorCode', selectedOption.value);
+        } else {
+            setSelectedMajorCode('');
+            localStorage.removeItem('selectedMajorCode');
+        }
     };
 
     const handleNextPrompt = () => {
@@ -98,7 +119,7 @@ export default function Home() {
         if (currentPromptIndex === 0) {
             setCurrentPromptIndex(1);
         } else if (currentPromptIndex === 1) {
-            if (selectedMajor) {
+            if (selectedMajorCode) {
                 setCurrentPromptIndex(2);
             }
         } else if (currentPromptIndex === 2) {
@@ -123,7 +144,7 @@ export default function Home() {
         localStorage.removeItem('textBubbles');
 
         // Reset state
-        setSelectedMajor('');
+        setSelectedMajorCode('');
         setTextBubbles([]);
         setInputValue('');
         setCurrentPromptIndex(0);
@@ -149,20 +170,28 @@ export default function Home() {
                 {/* Second prompt - Dropdown for majors */}
                 {currentPromptIndex === 1 && (
                     <Select
-                        onChange={handleMajorChange}
-                        value={selectedMajor}
-                        placeholder="Select your major"
-                        variant="outline"
-                        mb={4}
-                        borderColor="#a796c9" // Light purple outline
-                        color="white" // White text
-                    >
-                        {majorOptions.map((option, index) => (
-                            <option key={index} value={option}>
-                                {option}
-                            </option>
-                        ))}
-                    </Select>
+                        value={selectedMajorCode ? { value: selectedMajorCode, label: majorsWithCodes.find(m => m.code === selectedMajorCode)?.name || '' } : null}
+                        onChange={handleMajorSelect}
+                        options={majorsWithCodes.map(major => ({ value: major.code, label: major.name }))}
+                        placeholder="Search for your major..."
+                        isClearable
+                        isSearchable
+                        styles={{
+                            control: (base) => ({
+                                ...base,
+                                borderColor: '#a796c9',
+                                backgroundColor: 'white',
+                            }),
+                            singleValue: (base) => ({
+                                ...base,
+                                color: 'black',
+                            }),
+                            option: (base) => ({
+                                ...base,
+                                color: 'black',
+                            }),
+                        }}
+                    />
                 )}
 
                 {/* Third prompt - Text input for interests */}
@@ -212,7 +241,7 @@ export default function Home() {
             {currentPromptIndex === 2 && (
                 <Box mt={4} display="flex" flexWrap="wrap" gap={2}>
                     {textBubbles.map((text, index) => (
-                        <Box key={index} display="inline-flex" alignItems="center" bg="purple.100" borderRadius="full" px={4} py={2} maxWidth="0%">
+                        <Box key={index} display="inline-flex" alignItems="center" bg="purple.100" borderRadius="full" px={4} py={2} maxWidth="90%">
                             {text}
                             <Button
                                 onClick={() => handleRemoveBubble(index)}
