@@ -28,7 +28,7 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en">
-<head></head>
+        <head></head>
         <body>
         <ChakraProvider theme={theme}>
             <Global styles={GlobalStyles} />
