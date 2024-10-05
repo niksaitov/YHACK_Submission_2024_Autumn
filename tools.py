@@ -1,5 +1,6 @@
 from flask import jsonify
 import pandas as pd
+import re
 import requests
 import config
 
@@ -12,7 +13,8 @@ def is_faulty_response(response:dict):
 
 def get_subjects_api_call():
     endpoint = "https://gw.its.yale.edu/soa-gateway/course/webservice/v2/subjects"
-    response = requests.get(endpoint)
+    api_url = f"{endpoint}?apikey={config.API_KEY}"
+    response = requests.get(api_url)
     
     # check if the request failed
     if response.status_code != 200:
@@ -49,11 +51,32 @@ def get_detailed_descriptions():
     # df.to_csv('output.csv', index=False)
     return all_courses_info    
 
+def clean_text(text):
+    if pd.isna(text):
+        return "Value Not Provided"
+    text = re.sub(r'<.*?>', '', str(text))
+    text = re.sub(r'#\d+', '', str(text))  
+    return text.strip()
+
+def truncate_text(text):
+    if len(text) <= 1020:
+        return text
+    truncated = text[:1020].rsplit(' ', 1)[0]
+    return truncated + "..."
+
 def clean_and_filter(path_to_csv):
 
     df = pd.read_csv(path_to_csv)
     desired_columns = ['courseNumber', 'courseTitle', 'crn', 'department', 'description', 'distDesg', 'meetingPattern', 'prerequisites']
     df_filtered = df[desired_columns]
-    
+
+    df_filtered.loc[:, 'description'] = df_filtered['description'].apply(clean_text)
+    df_filtered.loc[:, 'prerequisites'] = df_filtered['prerequisites'].apply(clean_text)
+
+    # Apply the truncation function to 'department' and 'description'
+    df_filtered.loc[:, 'department'] = df_filtered['department'].apply(truncate_text)
+    df_filtered.loc[:, 'description'] = df_filtered['description'].apply(truncate_text)
+
     df_unique = df_filtered.drop_duplicates(subset='description')
     df_unique.to_csv('cleaned_courses.csv', index=False)
+
