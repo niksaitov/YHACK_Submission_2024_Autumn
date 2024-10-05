@@ -20,7 +20,7 @@ def get_subjects_api_call():
     if response.status_code != 200:
         return jsonify({'error': 'Failed to fetch subjects', 'status_code': response.status_code})
     else:
-        return response.json()
+        return jsonify(response)
     
 def get_subjects_info_api_call(department_code):
     endpoint = "https://gw.its.yale.edu/soa-gateway/courses/webservice/v3/index"
@@ -29,7 +29,7 @@ def get_subjects_info_api_call(department_code):
     
     # check if the request was successful
     if response.status_code == 200:
-        return response.json()
+        return jsonify(response)
     else:
         return jsonify({'error': 'Failed to fetch subjects', 'status_code': response.status_code})
     
@@ -55,7 +55,7 @@ def clean_text(text):
     if pd.isna(text):
         return "Value Not Provided"
     text = re.sub(r'<.*?>', '', str(text))
-    text = re.sub(r'#\d+', '', str(text))  
+    text = re.sub(r'#&160;', '', str(text))  
     return text.strip()
 
 def truncate_text(text):
@@ -73,7 +73,6 @@ def clean_and_filter(path_to_csv):
     df_filtered.loc[:, 'description'] = df_filtered['description'].apply(clean_text)
     df_filtered.loc[:, 'prerequisites'] = df_filtered['prerequisites'].apply(clean_text)
 
-    # Apply the truncation function to 'department' and 'description'
     df_filtered.loc[:, 'department'] = df_filtered['department'].apply(truncate_text)
     df_filtered.loc[:, 'description'] = df_filtered['description'].apply(truncate_text)
 
