@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify
 import requests
 import config
 import csv
@@ -19,10 +19,8 @@ def get_subjects():
         
         # Check if the request was successful
         if response.status_code == 200:
-            # Return the JSON response from the API
-            return jsonify(response.json())
+            return response.json()
         else:
-            # Handle errors (non-200 status codes)
             return jsonify({'error': 'Failed to fetch subjects', 'status_code': response.status_code})
     
     except Exception as e:
