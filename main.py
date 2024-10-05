@@ -11,8 +11,8 @@ def home():
 @app.route('/get-subjects', methods=['GET'])
 def get_subjects():
     
-    api_url = f"https://gw.its.yale.edu/soa-gateway/course/webservice/v2/subjects?apikey={config.API_KEY}"
-
+    api_url = 'http://example.com/soa-gateway/course/webservice/v2/subjects'
+    
     try:
         # Make the request to the API
         response = requests.get(api_url)
@@ -30,4 +30,4 @@ def get_subjects():
         return jsonify({'error': str(e)})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='127.0.0.1', port=5000)
