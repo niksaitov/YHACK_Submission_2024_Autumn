@@ -1,24 +1,7 @@
 #run: python create_table.py to populate table
 
-import os, pandas as pd
 from sentence_transformers import SentenceTransformer
-from sqlalchemy import create_engine, text
-
-username = 'demo'
-password = 'demo'
-hostname = os.getenv('IRIS_HOSTNAME', 'localhost')
-port = '1972' 
-namespace = 'USER'
-CONNECTION_STRING = f"iris://{username}:{password}@{hostname}:{port}/{namespace}"
-engine = create_engine(CONNECTION_STRING)
-
-# Load your model (for generating description vectors)
-model = SentenceTransformer('all-MiniLM-L6-v2') 
-
-df = pd.read_csv('cleaned_courses.csv')
-
-# Generate embeddings for the descriptions
-df['description_vector'] = model.encode(df['description'].tolist(), normalize_embeddings=True).tolist()
+from sqlalchemy import text
 
 def create_courses_table(df, engine):
     with engine.connect() as conn:
@@ -59,7 +42,3 @@ def create_courses_table(df, engine):
                 'description_vector': str(row['description_vector'])
     
                 })
-
-
-# Run the function to create the table and insert data
-create_courses_table(df, engine)

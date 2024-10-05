@@ -81,6 +81,7 @@ def clean_and_filter(path_to_csv):
     df_unique.to_csv('cleaned_courses.csv', index=False)
 
 def perform_search(model, engine, description_search, department):
+    
     # convert the search query into a vector
     search_vector = model.encode(description_search, normalize_embeddings=True).tolist()
 
