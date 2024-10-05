@@ -1,7 +1,9 @@
 from flask import Flask, jsonify, request
 import requests
 
-
+@app.route('/')
+def home():
+    return "welcome to flask"
 
 app = Flask(__name__)
 
