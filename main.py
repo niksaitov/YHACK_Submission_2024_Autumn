@@ -13,10 +13,6 @@ def home():
 @app.route('/get-subjects', methods=['GET'])
 def get_subjects():
 
-    try:
-        api_url = f"https://gw.its.yale.edu/soa-gateway/course/webservice/v2/subjects?apikey={config.API_KEY}"
-        
-    
     api_url = 'http://example.com/soa-gateway/course/webservice/v2/subjects'
     
     try:
@@ -36,8 +32,9 @@ def get_subjects():
 @app.route('/get-subjects-to-csv', methods=['GET'])
 def convert_json_to_csv():
 
+    api_url = f"https://gw.its.yale.edu/soa-gateway/course/webservice/v2/subjects?apikey={config.API_KEY}"
+
     try:
-        api_url = f"https://gw.its.yale.edu/soa-gateway/course/webservice/v2/subjects?apikey={config.API_KEY}"
         
         response = requests.get(api_url)
 
