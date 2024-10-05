@@ -48,3 +48,12 @@ def get_detailed_descriptions():
     # df = pd.DataFrame(all_courses_info)
     # df.to_csv('output.csv', index=False)
     return all_courses_info    
+
+def clean_and_filter(path_to_csv):
+
+    df = pd.read_csv(path_to_csv)
+    desired_columns = ['courseNumber', 'courseTitle', 'crn', 'department', 'description', 'distDesg', 'meetingPattern', 'prerequisites']
+    df_filtered = df[desired_columns]
+    
+    df_unique = df_filtered.drop_duplicates(subset='description')
+    df_unique.to_csv('cleaned_courses.csv', index=False)
