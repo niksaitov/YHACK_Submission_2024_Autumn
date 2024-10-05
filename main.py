@@ -15,7 +15,10 @@ def home():
 def get_subjects():
 
     endpoint = "https://gw.its.yale.edu/soa-gateway/course/webservice/v2/subjects"
-    response = requests.get(endpoint)
+    mode = "json"
+    api_url = f"{endpoint}?apikey={config.API_KEY}&mode={mode}"
+
+    response = requests.get(api_url)
     
     # check if the request failed
     if response.status_code != 200:
@@ -59,9 +62,9 @@ def get_detailed_descriptions():
 
     all_courses_info = list()
     endpoint = "https://gw.its.yale.edu/soa-gateway/courses/webservice/v3/index"
-    for departmetn_code in unique_department_codes:
+    for department_code in unique_department_codes:
 
-        api_url = f"{endpoint}?apikey={config.API_KEY}&subjectCode={departmetn_code}"
+        api_url = f"{endpoint}?apikey={config.API_KEY}&subjectCode={department_code}"
         response = requests.get(api_url)
         all_courses_info += response.json()
 
