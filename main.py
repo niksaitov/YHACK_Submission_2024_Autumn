@@ -14,8 +14,10 @@ def home():
 def get_subjects():
 
     try:
+        api_url = f"https://gw.its.yale.edu/soa-gateway/course/webservice/v2/subjects?apikey={config.API_KEY}"
+        
         # Make the request to the API
-        response = requests.get(config.api_url)
+        response = requests.get(api_url)
         
         # Check if the request was successful
         if response.status_code == 200:
@@ -31,8 +33,9 @@ def get_subjects():
 def convert_json_to_csv():
 
     try:
-
-        response = requests.get(config.api_url)
+        api_url = f"https://gw.its.yale.edu/soa-gateway/course/webservice/v2/subjects?apikey={config.API_KEY}"
+        
+        response = requests.get(api_url)
 
         if(response.status_code == 200):
             # populate a new csv file
