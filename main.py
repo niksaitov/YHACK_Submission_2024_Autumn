@@ -29,6 +29,24 @@ def get_subjects():
         # Handle exceptions
         return jsonify({'error': str(e)})
     
+@app.route('/get-subject-info', methods=['GET'])
+def get_subject_info():
+    
+    endpoint = "https://gw.its.yale.edu/soa-gateway/courses/webservice/v3/index"
+    subject_code = "ENGL"
+    api_url = f"{endpoint}?apikey={config.API_KEY}&subjectCode={subject_code}"
+    try:
+        response = requests.get(api_url)
+        
+        # Check if the request was successful
+        if response.status_code == 200:
+            return response.json()
+        else:
+            return jsonify({'error': 'Failed to fetch subjects', 'status_code': response.status_code})
+    
+    except Exception as exc:
+        return jsonify({'error': str(exc)})
+    
 @app.route('/get-subjects-to-csv', methods=['GET'])
 def convert_json_to_csv():
 
