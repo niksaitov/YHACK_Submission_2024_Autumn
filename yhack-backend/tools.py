@@ -12,7 +12,8 @@ def is_faulty_response(response:dict):
 
 def get_subjects_api_call():
     endpoint = "https://gw.its.yale.edu/soa-gateway/course/webservice/v2/subjects"
-    response = requests.get(endpoint)
+    api_url = f"{endpoint}?apikey={config.API_KEY}"
+    response = requests.get(api_url)
     
     # check if the request failed
     if response.status_code != 200:
