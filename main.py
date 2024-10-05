@@ -1,16 +1,16 @@
 from flask import Flask, jsonify, request
 import requests
 
+app = Flask(__name__)
+
 @app.route('/')
 def home():
     return "welcome to flask"
 
-app = Flask(__name__)
-
 @app.route('/get-subjects', methods=['GET'])
 def get_subjects():
     
-    api_url = 'http://example.com/soa-gateway/course/webservice/v2/subjects'
+    api_url = 'http://example.com/soa-gateway/course/webservice/v2/subjects?apikey={config.API_KEY}'
     
     try:
         # Make the request to the API
@@ -29,4 +29,4 @@ def get_subjects():
         return jsonify({'error': str(e)})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='127.0.0.1', port=5000)
