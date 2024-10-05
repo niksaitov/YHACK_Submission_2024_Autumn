@@ -164,3 +164,5 @@ cython_debug/
 # Datasource local storage ignored files
 /dataSources/
 /dataSources.local.xml
+
+.ipynb_checkpoints/
