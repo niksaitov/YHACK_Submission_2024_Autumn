@@ -1,8 +1,9 @@
 from flask import jsonify
+from sqlalchemy import text
 import pandas as pd
-import re
 import requests
 import config
+import re
 
 def extract_codes(json_data):
     course_codes = {item['code'] for item in json_data}
@@ -79,3 +80,33 @@ def clean_and_filter(path_to_csv):
     df_unique = df_filtered.drop_duplicates(subset='description')
     df_unique.to_csv('cleaned_courses.csv', index=False)
 
+def perform_search(model, engine, description_search, department):
+    # convert the search query into a vector
+    search_vector = model.encode(description_search, normalize_embeddings=True).tolist()
+
+    # query the database for similar courses, filtering by department and limiting to top 5
+    with engine.connect() as conn:
+        sql = text("""
+            SELECT TOP 5 * FROM courses 
+            WHERE (:department IS NULL OR department = :department)
+            ORDER BY VECTOR_DOT_PRODUCT(description_vector, TO_VECTOR(:search_vector)) DESC
+        """)
+        results = conn.execute(sql, {'department': department, 'search_vector': search_vector}).fetchall()
+
+        # format the results and return them to the client
+    courses = [
+        {
+            'courseNumber': row['courseNumber'], 
+            'courseTitle': row['courseTitle'], 
+            'crn': row['crn'], 
+            'department': row['department'], 
+            'description': row['description'],
+            'distDesg': row['distDesg'], 
+            'meetingPattern': row['meetingPattern'], 
+            'prerequisites': row['prerequisites'], 
+            'description_vector': row['description_vector']  # return the vector if necessary, or remove it
+        }
+        for row in results
+    ]
+        
+    return jsonify(courses) 
