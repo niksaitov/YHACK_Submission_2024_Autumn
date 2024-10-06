@@ -84,30 +84,35 @@ def perform_search(model, engine, description_search, department):
     
     # convert the search query into a vector
     search_vector = model.encode(description_search, normalize_embeddings=True).tolist()
+    
+    # search_vector_json = json.dumps(search_vector)
 
     # query the database for similar courses, filtering by department and limiting to top 5
     with engine.connect() as conn:
-        sql = text("""
-            SELECT TOP 5 * FROM courses 
-            WHERE (:department IS NULL OR department = :department)
-            ORDER BY VECTOR_DOT_PRODUCT(description_vector, TO_VECTOR(:search_vector)) DESC
-        """)
-        results = conn.execute(sql, {'department': department, 'search_vector': search_vector}).fetchall()
+        with conn.begin():
+            sql = text("""
+                SELECT TOP 5 * FROM courses 
+                WHERE (:department IS NULL OR department = :department)
+                ORDER BY VECTOR_DOT_PRODUCT(description_vector, TO_VECTOR(:search_vector)) DESC
+            """)
+            results = conn.execute(sql, {'department': department, 'search_vector': str(search_vector)}).fetchall()
 
-        # format the results and return them to the client
-    courses = [
-        {
-            'courseNumber': row['courseNumber'], 
-            'courseTitle': row['courseTitle'], 
-            'crn': row['crn'], 
-            'department': row['department'], 
-            'description': row['description'],
-            'distDesg': row['distDesg'], 
-            'meetingPattern': row['meetingPattern'], 
-            'prerequisites': row['prerequisites'], 
-            'description_vector': row['description_vector']  # return the vector if necessary, or remove it
+
+    formatted_courses = []
+    
+    for row in results:
+        # Unpack the tuple and convert it into the required dictionary format
+        course_dict = {
+            'courseNumber': str(row[0]),  # Convert to string if not already
+            'courseTitle': str(row[1]),
+            'crn': str(row[2]),
+            'department': str(row[3]),
+            'description': str(row[4]),
+            'distDesg': str(row[5]),
+            'meetingPattern': str(row[6]),
+            'prerequisites': str(row[7])
         }
-        for row in results
-    ]
+        formatted_courses.append(course_dict)
+    
+    return jsonify(formatted_courses)
         
-    return jsonify(courses) 

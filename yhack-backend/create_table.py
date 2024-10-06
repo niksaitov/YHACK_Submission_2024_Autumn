@@ -4,6 +4,7 @@ from sentence_transformers import SentenceTransformer
 from sqlalchemy import text
 
 def create_courses_table(df, engine):
+    # Generate embeddings for all descriptions at once. Batch processing makes it faster
     with engine.connect() as conn:
         with conn.begin():
             conn.execute(text("DROP TABLE IF EXISTS courses"))
@@ -40,5 +41,4 @@ def create_courses_table(df, engine):
                 'meetingPattern': row['meetingPattern'], 
                 'prerequisites': row['prerequisites'], 
                 'description_vector': str(row['description_vector'])
-    
                 })

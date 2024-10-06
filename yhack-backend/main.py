@@ -25,27 +25,36 @@ def get_subjects():
 def get_subject_info():
     return tools.get_subjects_info_api_call('ENGL')
 
-@app.route('/search', methods=['POST'])
+@app.route('/search', methods=['GET'])
 def search_courses():
 
-    #data = request.json
-    data = {'data':'computer science', 'department':'CPSC'}
-    description_search = data['query']  # get the search query from the request
-    department = data['department'].lower()  # convert department to lowercase for lookup
+    # data = request.json
+    # description_search = request.args.get('query')
+    # # department = request.args.get('department')
+    # description_search = request.args.get('query', '')  # Get the search query from the URL parameters
+    # department = request.args.get('department', '').upper()  # Get the department from the URL parameters and convert to lowercase
+    # data = {'query':'computer science', 'department':'CPSC'}
+    # description_search = data['query']  # get the search query from the request
+    # department = data['department'].lower()  # convert department to lowercase for lookup
 
-    return tools.perform_search(model, engine, description_search, department)
+    return tools.perform_search(model, engine, "description_search", "CPSC")
 
 #@app.route('/api/')
 
 if __name__ == '__main__':
 
-    username = 'demo', password = 'demo'
+    username = 'demo'
+    password = 'demo'
     hostname = os.getenv('IRIS_HOSTNAME', 'localhost')
     port = '1972' 
     namespace = 'USER'
     CONNECTION_STRING = f"iris://{username}:{password}@{hostname}:{port}/{namespace}"
     engine = create_engine(CONNECTION_STRING)
     df = pd.read_csv('cleaned_courses.csv')
+    embeddings = model.encode(df['description'].tolist(), normalize_embeddings=True)
+
+    # Add the embeddings to the DataFrame
+    df['description_vector'] = embeddings.tolist()
 
     create_courses_table(df, engine)
     
