@@ -32,11 +32,6 @@ def search_courses():
     # data = request.json
     description_search = request.args.get('query')
     department = request.args.get('department')
-    # description_search = request.args.get('query', '')  # Get the search query from the URL parameters
-    # department = request.args.get('department', '').upper()  # Get the department from the URL parameters and convert to lowercase
-    # data = {'query':'computer science', 'department':'CPSC'}
-    # description_search = data['query']  # get the search query from the request
-    # department = data['department'].lower()  # convert department to lowercase for lookup
 
     return tools.perform_search(model, engine, description_search, department)
 

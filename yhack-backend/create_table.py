@@ -26,6 +26,10 @@ def create_courses_table(df, engine):
             
             # Insert course data into the table
             for index, row in df.iterrows():
+                # Remove 'YC' prefix if it exists in distDesg
+                distDesg = row['distDesg']
+                if distDesg.startswith("YC"):
+                    distDesg = distDesg[2:]  # Remove the first two characters ('YC')
                 sql = text("""
                     INSERT INTO courses
                     (courseNumber, courseTitle, crn, department, description, distDesg, meetingPattern, prerequisites, description_vector) 

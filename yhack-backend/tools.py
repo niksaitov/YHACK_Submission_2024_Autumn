@@ -85,8 +85,6 @@ def perform_search(model, engine, description_search, department):
     # convert the search query into a vector
     search_vector = model.encode(description_search, normalize_embeddings=True).tolist()
     
-    # search_vector_json = json.dumps(search_vector)
-
     # query the database for similar courses, filtering by department and limiting to top 5
     with engine.connect() as conn:
         with conn.begin():
