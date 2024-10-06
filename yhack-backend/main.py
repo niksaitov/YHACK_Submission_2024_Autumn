@@ -5,8 +5,11 @@ from flask import Flask, request
 import pandas as pd
 import tools
 import os
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
+# app = Flask(__name__)
 
 # load model (for generating description vectors)
 model = SentenceTransformer('all-MiniLM-L6-v2') 

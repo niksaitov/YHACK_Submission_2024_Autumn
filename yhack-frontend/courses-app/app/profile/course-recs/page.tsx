@@ -99,7 +99,7 @@ const CourseRecommendations: React.FC = () => {
             <Flex justify="center" mt={8}>
                 <Link href="/" passHref>
                     <Button
-                        as="button" // Avoid nesting <a> elements
+                        as="button" 
                         colorScheme="purple"
                         bg="#a796c9"
                         color="#333333"
