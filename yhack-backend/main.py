@@ -8,8 +8,6 @@ import os
 
 app = Flask(__name__)
 
-
-
 # load model (for generating description vectors)
 model = SentenceTransformer('all-MiniLM-L6-v2') 
 
