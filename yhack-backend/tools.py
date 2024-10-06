@@ -1,8 +1,9 @@
 from flask import jsonify
+from sqlalchemy import text
 import pandas as pd
-import re
 import requests
 import config
+import re
 
 def extract_codes(json_data):
     course_codes = {item['code'] for item in json_data}
@@ -79,3 +80,39 @@ def clean_and_filter(path_to_csv):
     df_unique = df_filtered.drop_duplicates(subset='description')
     df_unique.to_csv('cleaned_courses.csv', index=False)
 
+def perform_search(model, engine, description_search, department):
+    
+    # convert the search query into a vector
+    search_vector = model.encode(description_search, normalize_embeddings=True).tolist()
+    
+    # search_vector_json = json.dumps(search_vector)
+
+    # query the database for similar courses, filtering by department and limiting to top 5
+    with engine.connect() as conn:
+        with conn.begin():
+            sql = text("""
+                SELECT TOP 6 * FROM courses 
+                WHERE (:department IS NULL OR department = :department)
+                ORDER BY VECTOR_DOT_PRODUCT(description_vector, TO_VECTOR(:search_vector)) DESC
+            """)
+            results = conn.execute(sql, {'department': department, 'search_vector': str(search_vector)}).fetchall()
+
+
+    formatted_courses = []
+    
+    for row in results:
+        # Unpack the tuple and convert it into the required dictionary format
+        course_dict = {
+            'courseNumber': str(row[0]),  # Convert to string if not already
+            'courseTitle': str(row[1]),
+            'crn': str(row[2]),
+            'department': str(row[3]),
+            'description': str(row[4]),
+            'distDesg': str(row[5]),
+            'meetingPattern': str(row[6]),
+            'prerequisites': str(row[7])
+        }
+        formatted_courses.append(course_dict)
+    
+    return jsonify(formatted_courses)
+        
