@@ -299,7 +299,7 @@ export default function Home() {
 
                 {/* Second prompt - Dropdown for majors */}
                 {typingComplete && currentPromptIndex === 1 && (
-                    <Select<String>
+                    <Select
                         value={selectedMajorCode ? { value: selectedMajorCode, label: majorsWithCodes.find(m => m.code === selectedMajorCode)?.name || '' } : null}
                         onChange={handleMajorSelect}
                         options={majorsWithCodes.map(major => ({ value: major.code, label: major.name }))}
