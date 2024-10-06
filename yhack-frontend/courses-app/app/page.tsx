@@ -28,10 +28,15 @@ const LandingPage = () => {
                     </Heading>
                     <Heading as="h1" size="3xl" color={customColors.buttonSecondary} textAlign="center" fontWeight="bold"> courselrns </Heading>
                     <VStack spacing={4}>
-                        <Button size="lg" width="full" bg={customColors.buttonPrimary} color={customColors.background} _hover={{ opacity: 0.9 }}>
-                            LOGIN WITH CAS
+                        <Button size="lg" width="full" bg={customColors.buttonPrimary}
+                                color={customColors.background} _hover={{ opacity: 0.9 }}
+                                onClick={() => window.location.href = '/profile'}
+                        >
+                            GET STARTED
                         </Button>
-                        <Button size="lg" width="full" bg={customColors.buttonSecondary} color={customColors.background} _hover={{ opacity: 0.9 }}>
+                        <Button size="lg" width="full" bg={customColors.buttonSecondary} color={customColors.background} _hover={{ opacity: 0.9 }}
+                                onClick={() => window.location.href = '/profile'}
+                               >
                             ABOUT US
                         </Button>
                         <Button
@@ -40,6 +45,7 @@ const LandingPage = () => {
                             bg={customColors.buttonTertiary}
                             color={customColors.text}
                             _hover={{ opacity: 0.9 }}
+                            onClick={() => window.location.href = 'https://github.com/niksaitov/YHACK_Submission_2024_Autumn'}
                             leftIcon={<Icon as={FaGithub} boxSize={6} />}
                         >
                             GITHUB
