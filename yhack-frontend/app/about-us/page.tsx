@@ -22,7 +22,7 @@ const Card = ({ header, bio, favoriteClass, githubUrl }: { header: string; bio: 
         textAlign="center"
         height="250px" // Increased height to accommodate the button
     >
-        <Heading size="lg" mb={2}>{header}</Heading>
+        <Heading colorScheme="purple" size="lg" mb={2}>{header}</Heading>
         <Text fontSize="md" mb={4}>{bio}</Text>
         <Text fontSize="sm" fontWeight="bold">Favorite Class:</Text>
         <Text fontSize="sm" mb={4}>{favoriteClass}</Text>
@@ -49,6 +49,7 @@ const AboutUs = () => {
             flexDirection="column"
             alignItems="center"
         >
+            <Image src="/lrns.jpg" alt="LRNS" />
             <Heading color={customColors.text} mb={6}>
                Meet the team behind courselrns!
             </Heading>
@@ -56,6 +57,7 @@ const AboutUs = () => {
             <SimpleGrid columns={[1, null, 2]} spacing={6} mb={8}>
                 <Card
                     header="L: Lena Qian"
+
                     bio="Lena likes food. Lena likes Gordon Ramsay. Lena hopes you have a great day."
                     favoriteClass="CPSC 323"
                     githubUrl="https://github.com/lenaqian"
