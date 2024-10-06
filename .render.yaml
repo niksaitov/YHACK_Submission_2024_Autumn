@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: flask-backend
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: FLASK_ENV
+        value: production
+    region: oregon
+    autoDeploy: true
+    repoPath: backend
+
+  - type: web
+    name: nextjs-frontend
+    env: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        value: https://flask-backend.onrender.com
+    region: oregon
+    staticPublishPath: out
+    repoPath: frontend
