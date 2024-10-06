@@ -56,7 +56,8 @@ def clean_text(text):
     if pd.isna(text):
         return "Value Not Provided"
     text = re.sub(r'<.*?>', '', str(text))
-    text = re.sub(r'#&160;', '', str(text))  
+    text = re.sub(r'&#160;', '', str(text))  
+    text = re.sub(r'&amp;', '&', str(text))
     return text.strip()
 
 def truncate_text(text):
@@ -72,13 +73,15 @@ def clean_and_filter(path_to_csv):
     df_filtered = df[desired_columns]
 
     df_filtered.loc[:, 'description'] = df_filtered['description'].apply(clean_text)
+    df_filtered.loc[:, 'distDesg'] = df_filtered['distDesg'].apply(clean_text)
+    df_filtered.loc[:, 'meetingPattern'] = df_filtered['meetingPattern'].apply(clean_text)
     df_filtered.loc[:, 'prerequisites'] = df_filtered['prerequisites'].apply(clean_text)
 
     df_filtered.loc[:, 'department'] = df_filtered['department'].apply(truncate_text)
     df_filtered.loc[:, 'description'] = df_filtered['description'].apply(truncate_text)
 
     df_unique = df_filtered.drop_duplicates(subset='description')
-    df_unique.to_csv('cleaned_courses.csv', index=False)
+    df_unique.to_csv('clean_courses.csv', index=False)
 
 def perform_search(model, engine, description_search, department):
     
