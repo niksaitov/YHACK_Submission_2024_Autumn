@@ -16,7 +16,7 @@ model = SentenceTransformer('all-MiniLM-L6-v2')
 
 @app.route('/')
 def home():
-    return 'welcome to flask'
+    return 'Welcome to flask!'
 
 @app.route('/get-subjects', methods=['GET'])
 def get_subjects():
@@ -35,8 +35,6 @@ def search_courses():
 
     return tools.perform_search(model, engine, description_search, department)
 
-#@app.route('/api/')
-
 if __name__ == '__main__':
 
     username = 'demo'
@@ -47,13 +45,13 @@ if __name__ == '__main__':
     CONNECTION_STRING = f"iris://{username}:{password}@{hostname}:{port}/{namespace}"
     engine = create_engine(CONNECTION_STRING)
     df = pd.read_csv('clean_courses.csv')
+    
+    #create embeddings
     embeddings = model.encode(df['description'].tolist(), normalize_embeddings=True)
-
-    # Add the embeddings to the DataFrame
+    # add the embeddings to the DataFrame
     df['description_vector'] = embeddings.tolist()
 
     create_courses_table(df, engine)
-    
     app.run(debug=True)
 
 
