@@ -1,10 +1,9 @@
 // home/page.tsx
 'use client';
 import React, { useState, useEffect } from 'react';
-import { Box, Button, Heading, Input, Stack, Text, Spinner} from '@chakra-ui/react';
+import { Box, Button, Heading, Input, Stack, Text} from '@chakra-ui/react';
 import Select from 'react-select';
 import Typed from 'typed.js';
-import Link from 'next/link';
 
 // Define custom colors
 const customColors = {
@@ -13,6 +12,7 @@ const customColors = {
     buttonBackground: "#a796c9",
     buttonText: '#FFFFFF',
 };
+
 
 const majorsWithCodes = [
     { code: 'AFAM', name: 'African American Studies' },
@@ -147,7 +147,6 @@ const majorsWithCodes = [
 
 export default function Home() {
     const [inputValue, setInputValue] = useState('');
-    const [filteredMajors, setFilteredMajors] = useState(majorsWithCodes);
     const [selectedMajorCode, setSelectedMajorCode] = useState('');
     const [currentPromptIndex, setCurrentPromptIndex] = useState(0);
     const [showNextButton, setShowNextButton] = useState(false);
@@ -205,11 +204,7 @@ export default function Home() {
         const value = event.target.value;
         setInputValue(value);
 
-        // Filter majors based on input
-        const filtered = majorsWithCodes.filter(major =>
-            major.name.toLowerCase().includes(value.toLowerCase())
-        );
-        setFilteredMajors(filtered);
+
     };
 
     const handleAddBubble = () => {
@@ -235,7 +230,7 @@ export default function Home() {
         if (selectedOption) {
             setSelectedMajorCode(selectedOption.value);
             setInputValue(''); // Clear input after selection
-            setFilteredMajors(majorsWithCodes); // Reset the list
+
 
             // Save the selected major code to localStorage
             localStorage.setItem('selectedMajorCode', selectedOption.value);
@@ -246,16 +241,19 @@ export default function Home() {
     };
 
     const handleNextPrompt = () => {
-        setTypingComplete(false);
+
         if (currentPromptIndex === 0) {
             setCurrentPromptIndex(1);
+            setTypingComplete(false);
         } else if (currentPromptIndex === 1) {
             if (selectedMajorCode) {
                 setCurrentPromptIndex(2);
+                setTypingComplete(false);
             }
         } else if (currentPromptIndex === 2) {
             handleAddBubble();
             setCurrentPromptIndex(3);
+            setTypingComplete(false);
             setLoading(true); // Start loading when moving to the final prompt
         }
     };
@@ -301,7 +299,7 @@ export default function Home() {
 
                 {/* Second prompt - Dropdown for majors */}
                 {typingComplete && currentPromptIndex === 1 && (
-                    <Select
+                    <Select<String>
                         value={selectedMajorCode ? { value: selectedMajorCode, label: majorsWithCodes.find(m => m.code === selectedMajorCode)?.name || '' } : null}
                         onChange={handleMajorSelect}
                         options={majorsWithCodes.map(major => ({ value: major.code, label: major.name }))}
@@ -309,16 +307,16 @@ export default function Home() {
                         isClearable
                         isSearchable
                         styles={{
-                            control: (base: any) => ({
+                            control: (base) => ({
                                 ...base,
                                 borderColor: '#a796c9',
                                 backgroundColor: 'white',
                             }),
-                            singleValue: (base: any) => ({
+                            singleValue: (base) => ({
                                 ...base,
                                 color: 'black',
                             }),
-                            option: (base: any) => ({
+                            option: (base) => ({
                                 ...base,
                                 color: 'black',
                             }),
