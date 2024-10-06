@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import React from 'react';
 import { Box, Heading, Text, Flex, Badge } from '@chakra-ui/react';
 
@@ -8,8 +8,8 @@ interface Course {
     crn: string;
     department: string;
     description: string;
-    distDesg: string;
-    meetingPattern: string;
+    distDesg: string[];
+    meetingPattern: string[];
     prerequisites: string;
 }
 
@@ -31,13 +31,32 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => (
         boxShadow="md"
         color={customColors.cardText}
     >
-        <Heading size="md" mb={2}>{course.courseNumber}: {course.courseTitle}</Heading>
+        <Heading size="md" mb={2}>
+            {course.department} {course.courseNumber}: {course.courseTitle}
+        </Heading>
         <Text fontSize="sm" mb={2}>{course.description}</Text>
+
         <Flex justify="space-between" align="center" mb={2}>
-            <Badge colorScheme="purple">{course.distDesg}</Badge>
-            <Text fontSize="sm">{course.meetingPattern}</Text>
+            <Box display="flex" gap={2} mt={2}>
+                {course.distDesg.map((designator, index) => (
+                    <Badge key={index} colorScheme="purple">
+                        {designator}
+                    </Badge>
+                ))}
+            </Box>
+
+            {/* Render meeting pattern only if it's not "HTBA" */}
+            {course.meetingPattern[0] !== 'HTBA' && (
+                <Text fontSize="sm">{course.meetingPattern[0]}</Text>
+            )}
         </Flex>
-        <Text fontSize="sm" fontStyle="italic">Prerequisites: {course.prerequisites}</Text>
+
+        {/* Render prerequisites only if they are not "Value Not Provided" */}
+        {course.prerequisites !== "Value Not Provided" && (
+            <Text fontSize="sm" fontStyle="italic">
+                Prerequisites: {course.prerequisites}
+            </Text>
+        )}
     </Box>
 );
 
