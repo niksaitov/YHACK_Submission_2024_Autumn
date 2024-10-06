@@ -180,5 +180,3 @@ yarn-error.log*
 next-env.d.ts
 
 iris-vector-search
-
-.gitignore
