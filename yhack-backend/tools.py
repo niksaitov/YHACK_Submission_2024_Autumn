@@ -91,7 +91,7 @@ def perform_search(model, engine, description_search, department):
     with engine.connect() as conn:
         with conn.begin():
             sql = text("""
-                SELECT TOP 5 * FROM courses 
+                SELECT TOP 6 * FROM courses 
                 WHERE (:department IS NULL OR department = :department)
                 ORDER BY VECTOR_DOT_PRODUCT(description_vector, TO_VECTOR(:search_vector)) DESC
             """)
