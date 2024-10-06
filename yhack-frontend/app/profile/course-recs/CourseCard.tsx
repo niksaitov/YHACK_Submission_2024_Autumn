@@ -37,13 +37,15 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => (
         <Text fontSize="sm" mb={2}>{course.description}</Text>
 
         <Flex justify="space-between" align="center" mb={2}>
-            <Box display="flex" gap={2} mt={2}>
-                {course.distDesg.map((designator, index) => (
-                    <Badge key={index} colorScheme="purple">
-                        {designator}
-                    </Badge>
-                ))}
-            </Box>
+            {course.distDesg.length > 0 && (
+                <Box display="flex" gap={2} mt={2}>
+                    {course.distDesg.map((designator, index) => (
+                        <Badge key={index} colorScheme="purple">
+                            {designator}
+                        </Badge>
+                    ))}
+                </Box>
+            )}
 
             {/* Render meeting pattern only if it's not "HTBA" */}
             {course.meetingPattern[0] !== 'HTBA' && (
