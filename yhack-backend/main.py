@@ -46,7 +46,7 @@ if __name__ == '__main__':
     namespace = 'USER'
     CONNECTION_STRING = f"iris://{username}:{password}@{hostname}:{port}/{namespace}"
     engine = create_engine(CONNECTION_STRING)
-    df = pd.read_csv('cleaned_courses.csv')
+    df = pd.read_csv('clean_courses.csv')
     embeddings = model.encode(df['description'].tolist(), normalize_embeddings=True)
 
     # Add the embeddings to the DataFrame
