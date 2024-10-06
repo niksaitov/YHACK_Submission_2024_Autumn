@@ -35,7 +35,7 @@ const LandingPage = () => {
                             GET STARTED
                         </Button>
                         <Button size="lg" width="full" bg={customColors.buttonSecondary} color={customColors.background} _hover={{ opacity: 0.9 }}
-                                onClick={() => window.location.href = '/profile'}
+                                onClick={() => window.location.href = '/about-us'}
                                >
                             ABOUT US
                         </Button>

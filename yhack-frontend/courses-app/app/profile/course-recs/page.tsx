@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Box, Button, Heading, Text, Spinner, Flex, SimpleGrid } from '@chakra-ui/react';
 import Link from 'next/link';
 import CourseCard from './CourseCard';
+import axios from 'axios';
 
 interface Course {
     courseNumber: string;
@@ -21,41 +22,35 @@ const customColors = {
     text: "#FFFFFF",
 };
 
-// Sample course data (replace this with your actual data fetching logic)
-const sampleCourses: Course[] = [
-    {
-        courseNumber: 'CPSC 100',
-        courseTitle: 'Introduction to Computing',
-        crn: '12345',
-        department: 'Computer Science',
-        description: 'An introduction to the fundamental concepts of computing and programming.',
-        distDesg: 'QR',
-        meetingPattern: 'MWF 10:00-10:50',
-        prerequisites: 'None',
-    },
-    {
-        courseNumber: 'ENGL 120',
-        courseTitle: 'Reading and Writing the Modern Essay',
-        crn: '23456',
-        department: 'English',
-        description: 'A study of the modern essay, with emphasis on writing techniques and analysis.',
-        distDesg: 'WR',
-        meetingPattern: 'TTh 13:00-14:15',
-        prerequisites: 'ENGL 114 or equivalent',
-    },
-    // Add more sample courses as needed
-];
-
 const CourseRecommendations: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const [courses, setCourses] = useState<Course[]>([]);
+    const [error, setError] = useState<string | null>(null); // State for error messages
 
     useEffect(() => {
-        // Simulating data fetching
-        setTimeout(() => {
-            setCourses(sampleCourses);
-            setLoading(false);
-        }, 2000);
+        const selectedMajorCode = localStorage.getItem('selectedMajorCode');
+        const textBubbles = JSON.parse(localStorage.getItem('textBubbles') || '[]');
+
+        // Condense textBubbles into a single string
+        const query = textBubbles.join(', '); // Join interests as a query
+        const department = selectedMajorCode || ''; // Use selected major code as department
+
+        // Make the Axios request
+        axios.get('http://localhost:5000/search', {
+            params: {
+                query,
+                department
+            }
+        })
+            .then(response => {
+                setCourses(response.data);
+                setLoading(false);
+            })
+            .catch(err => {
+                console.error('There was an error!', err);
+                setError('Failed to fetch course recommendations.'); // Set error message
+                setLoading(false);
+            });
     }, []);
 
     return (
@@ -81,6 +76,18 @@ const CourseRecommendations: React.FC = () => {
                         Loading your course recommendations...
                     </Text>
                 </Flex>
+            ) : error ? (
+                <Flex
+                    direction="column"
+                    align="center"
+                    justify="center"
+                    height="50vh"
+                    width="100%"
+                >
+                    <Text color={customColors.text} mt={4} textAlign="center">
+                        {error}
+                    </Text>
+                </Flex>
             ) : (
                 <SimpleGrid columns={[1, null, 2, 3]} spacing={6}>
                     {courses.map((course, index) => (
@@ -92,7 +99,7 @@ const CourseRecommendations: React.FC = () => {
             <Flex justify="center" mt={8}>
                 <Link href="/" passHref>
                     <Button
-                        as="button" // Change here to avoid nesting <a> elements
+                        as="button" // Avoid nesting <a> elements
                         colorScheme="purple"
                         bg="#a796c9"
                         color="#333333"

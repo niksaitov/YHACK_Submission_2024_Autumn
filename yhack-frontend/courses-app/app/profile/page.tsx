@@ -184,6 +184,8 @@ const majorsWithCodes = [
 ];
 
 
+
+
 export default function Home() {
     const [inputValue, setInputValue] = useState('');
     const [filteredMajors, setFilteredMajors] = useState(majorsWithCodes);
@@ -423,10 +425,16 @@ export default function Home() {
             )}
             {loading && (
                 <Box mt={4}>
-                    <Spinner size="xl" color="white" />
                     <Text color={customColors.text} mt={2}></Text>
                     <Link href="/profile/course-recs" passHref>
-                        <Box as="a" display="none" id="course-recs-link">Go to course recommendations!</Box>
+                        <Button
+                            colorScheme="purple"
+                            bg={customColors.buttonBackground}
+                            color={customColors.buttonText}
+                            mt={4}
+                        >
+                            View course recommendations
+                        </Button>
                     </Link>
                 </Box>
             )}

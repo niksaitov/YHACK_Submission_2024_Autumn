@@ -28,7 +28,6 @@ const Card = ({ header, bio, favoriteClass, githubUrl }: { header: string; bio: 
         <Text fontSize="sm" mb={4}>{favoriteClass}</Text>
         <Link href={githubUrl} passHref>
             <Button
-                as="a"
                 colorScheme="purple"
                 variant="outline"
                 leftIcon={<FaGithub />}
@@ -102,5 +101,4 @@ const AboutUs = () => {
         </Box>
     );
 };
-
 export default AboutUs;
