@@ -31,7 +31,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => (
     boxShadow="md"
     color={customColors.cardText}
   >
-    <Heading size="md" mb={2}>
+    <Heading color = "#FFFFFF" size="md" mb={2}>
       {course.department} {course.courseNumber}: {course.courseTitle}
     </Heading>
     <Text fontSize="sm" mb={2}>
