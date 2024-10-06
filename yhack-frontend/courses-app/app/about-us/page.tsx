@@ -32,7 +32,6 @@ const Card = ({ header, bio, favoriteClass, githubUrl }: { header: string; bio: 
                 variant="outline"
                 leftIcon={<FaGithub />}
                 mt={2}
-                target="_blank" // Open in a new tab
             >
                 Connect with {header.split(': ')[1]} {/* Extracts name from header */}
             </Button>
@@ -65,7 +64,7 @@ const AboutUs = () => {
                 />
                 <Card
                     header="R: Raymond Hou"
-                    bio="ChatGPT says Raymond is a data enthusiast. Claude says he is interested in AI."
+                    bio="ChatGPT says Raymond is a data enthusiast. Raymond says it's pronounced ho."
                     favoriteClass="CPSC 323"
                     githubUrl="https://github.com/lenaqian"
 
